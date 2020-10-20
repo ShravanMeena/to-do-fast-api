@@ -19,7 +19,7 @@ def get_db():
     try:
         yield db
     finally:
-        db.close()    
+        db.close()
 
 
 @app.post("/todos/", response_model = schemas.TodoShow)
@@ -38,3 +38,28 @@ def show_all_todos(skip = 0, limit= 100, db:Session = Depends(get_db)):
     API endpoint to get all todos
     """
     return handlers.get_all_todos(db,skip,limit)
+
+
+@app.get("/todo/{todo_id}")
+def show_todo(todo_id:int, db:Session=Depends(get_db)):
+    """
+    API endpoint to get todo
+    """
+    return handlers.get_todo_by_id(db,todo_id)
+
+
+@app.put("/todo/{todo_id}/", response_model = schemas.TodoShow)
+def update_todo(todo_id:int, todo:schemas.TodoCreate, db:Session=Depends(get_db)):
+    """
+    API endpoint to update todo
+    """
+    return handlers.update_todo(db,todo_id,todo)
+
+
+@app.delete("/todo/{todo_id}/")
+def delete_todo(todo_id:int,  db:Session=Depends(get_db)):
+    """
+    API endpoint to delet todo
+    """
+    handler = handlers.delete_todo(db,todo_id)
+    return "deleted succesfully"
